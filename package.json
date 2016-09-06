@@ -20,7 +20,8 @@
   "license": "MIT",
   "dependencies": {
     "deep-diff": "^0.3.4",
-    "escape-string-regexp": "^1.0.5"
+    "escape-string-regexp": "^1.0.5",
+    "scrollbar-size": "^1.0.4"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.8.0",

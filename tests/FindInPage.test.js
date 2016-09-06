@@ -7,6 +7,7 @@ describe('FindInPage', function() {
       width: 400,
       height: 400
     };
+    const scrollBarSize = 15;
     let baseElement;
     let findInPage;
     let foundLog = [];
@@ -157,13 +158,14 @@ describe('FindInPage', function() {
       assert(selection.rangeCount == 0);
     });
     
-    it('should scroll vertically to found text', async () => {
+    it('should scroll window vertically to found text', async () => {
       assert(window.innerHeight == 400);
       
       let selection;
       baseElement.innerHTML = `
         <style>
           * {margin: 0; padding: 0;}
+          body {width: 1200px}
           .keyword {padding-top: 800px; line-height: 30px;}
         </style>
         <div class="keyword">ぴか</div>
@@ -173,14 +175,14 @@ describe('FindInPage', function() {
       assert(foundLog[0].current == 0);
       assert(foundLog[0].total == 1);
       await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
-      assert(window.scrollY == 430);
+      assert(window.scrollY == 430 + scrollBarSize);
       
       selection = window.getSelection();
       assert(selection.toString() == 'ぴか');
       assert(selection.rangeCount == 1);
     });
     
-    it('should scroll horizontally to found text', async () => {
+    it('should scroll window horizontally to found text', async () => {
       assert(window.innerWidth == 400);
       
       let selection;
@@ -196,7 +198,37 @@ describe('FindInPage', function() {
       assert(foundLog[0].current == 0);
       assert(foundLog[0].total == 1);
       await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
-      assert(document.body.scrollLeft == 440);
+      assert(window.scrollX == 440);
+      
+      selection = window.getSelection();
+      assert(selection.toString() == 'ぴか');
+      assert(selection.rangeCount == 1);
+    });
+    
+    it('should scroll window to found text', async () => {
+      assert(window.innerWidth == 400);
+      
+      let selection;
+      baseElement.innerHTML = `
+        <style>
+          * {margin: 0; padding: 0;}
+          .keyword {
+            padding-top: 800px;
+            padding-left: 800px;
+            line-height: 30px;
+            font-size: 20px;
+            width: 40px;
+          }
+        </style>
+        <div class="keyword">ぴか</div>
+      `;
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 1);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      assert(window.scrollY == 430 + scrollBarSize);
+      assert(window.scrollX == 440 + scrollBarSize);
       
       selection = window.getSelection();
       assert(selection.toString() == 'ぴか');
