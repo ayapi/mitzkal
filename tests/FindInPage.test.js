@@ -28,6 +28,15 @@ describe('FindInPage', function() {
         windowInner.width + (window.outerWidth - window.innerWidth),
         windowInner.height + (window.outerHeight - window.innerHeight)
       );
+      
+      return new Promise(resolve => {
+        let timer = setInterval(() => {
+          if (window.innerWidth == windowInner.width) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, 100);
+      });
     });
     
     beforeEach(() => {
