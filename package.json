@@ -4,11 +4,11 @@
   "description": "yet another find-in-page for electron",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test electron-mocha --require babel-register --renderer ./tests"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "http://github.com/ayapi/mitzkal.git"
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/ayapi/mitzkal.git"
   },
   "keywords": [
     "electron",
@@ -21,5 +21,27 @@
   "dependencies": {
     "deep-diff": "^0.3.4",
     "escape-string-regexp": "^1.0.5"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.8.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.14.0",
+    "babel-preset-power-assert": "^1.0.0",
+    "babel-register": "^6.14.0",
+    "cross-env": "^2.0.1",
+    "electron-mocha": "^3.0.5",
+    "power-assert": "^1.4.1"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "plugins": [
+          "transform-async-to-generator",
+          "babel-plugin-transform-es2015-modules-commonjs"
+        ],
+        "presets": [
+          "babel-preset-power-assert"
+        ]
+      }
+    }
   }
 }
