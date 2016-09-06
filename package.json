@@ -1,0 +1,25 @@
+{
+  "name": "mitzkal",
+  "version": "0.0.1",
+  "description": "yet another find-in-page for electron",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "http://github.com/ayapi/mitzkal.git"
+  },
+  "keywords": [
+    "electron",
+    "search",
+    "find",
+    "webview"
+  ],
+  "author": "ayapi",
+  "license": "MIT",
+  "dependencies": {
+    "deep-diff": "^0.3.4",
+    "escape-string-regexp": "^1.0.5"
+  }
+}
