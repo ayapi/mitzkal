@@ -243,5 +243,233 @@ describe('FindInPage', function() {
       assert(selection.toString() == 'ぴか');
       assert(selection.rangeCount == 1);
     });
+    
+    it('should scroll overflow area horizontally to found text', async () => {
+      assert(window.innerWidth == 400);
+      
+      let selection;
+      baseElement.innerHTML = `
+        <style>
+          * {margin: 0; padding: 0;}
+          body {
+            width: 840px;
+          }
+          .wrapper {
+            overflow: scroll;
+            width: 200px;
+          }
+          .keyword {
+            padding-left: 400px;
+            font-size: 20px;
+            width: 40px;
+          }
+        </style>
+        <div class="wrapper">
+          <div class="keyword">ぴか</div>
+        </div>
+      `;
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 1);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      assert(window.scrollX == 0);
+      
+      let wrapper = document.querySelector('.wrapper');
+      assert(wrapper.scrollLeft == 240 + scrollBarSize);
+      
+      selection = window.getSelection();
+      assert(selection.toString() == 'ぴか');
+      assert(selection.rangeCount == 1);
+    });
+    
+    it('should scroll overflow area vertically to found text', async () => {
+      assert(window.innerHeight == 400);
+      
+      let selection;
+      baseElement.innerHTML = `
+        <style>
+          * {margin: 0; padding: 0;}
+          body {
+            height: 800px;
+          }
+          .wrapper {
+            overflow: scroll;
+            width: 100px;
+            height: 100px;
+          }
+          .keyword {
+            padding-top: 200px;
+            font-size: 20px;
+            line-height: 30px;
+            width: 40px;
+          }
+        </style>
+        <div class="wrapper">
+          <div class="keyword">ぴか</div>
+        </div>
+      `;
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 1);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      assert(window.scrollY == 0);
+      
+      let wrapper = document.querySelector('.wrapper');
+      assert(wrapper.scrollTop == 130 + scrollBarSize);
+      
+      selection = window.getSelection();
+      assert(selection.toString() == 'ぴか');
+      assert(selection.rangeCount == 1);
+    });
+    
+    it('should scroll overflow area to found text', async () => {
+      assert(window.innerWidth == 400);
+      assert(window.innerHeight == 400);
+      
+      let selection;
+      baseElement.innerHTML = `
+        <style>
+          * {margin: 0; padding: 0;}
+          body {
+            width: 800px;
+            height: 800px;
+          }
+          .wrapper {
+            overflow: scroll;
+            width: 100px;
+            height: 100px;
+          }
+          .keyword {
+            padding-left: 200px;
+            padding-top: 200px;
+            font-size: 20px;
+            line-height: 40px;
+            width: 40px;
+          }
+        </style>
+        <div class="wrapper">
+          <div class="keyword">ぴか</div>
+        </div>
+      `;
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 1);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      assert(window.scrollX == 0);
+      assert(window.scrollY == 0);
+      
+      let wrapper = document.querySelector('.wrapper');
+      assert(wrapper.scrollTop == 140 + scrollBarSize);
+      assert(wrapper.scrollLeft == 140 + scrollBarSize);
+      
+      selection = window.getSelection();
+      assert(selection.toString() == 'ぴか');
+      assert(selection.rangeCount == 1);
+    });
+    
+    it('should scroll nested overflow area to found text', async () => {
+      assert(window.innerWidth == 400);
+      assert(window.innerHeight == 400);
+      
+      let selection;
+      baseElement.innerHTML = `
+        <style>
+          * {margin: 0; padding: 0;}
+          body {
+            width: 800px;
+            height: 800px;
+          }
+          .wrapper {
+            overflow: scroll;
+            width: 100px;
+            height: 100px;
+          }
+          .child {
+            margin-left: 100px;
+            margin-top: 100px;
+          }
+          .keyword {
+            padding-left: 200px;
+            padding-top: 200px;
+            font-size: 20px;
+            line-height: 40px;
+            width: 40px;
+          }
+        </style>
+        <div class="wrapper parent">
+          <div class="wrapper child">
+            <div class="keyword">ぴか</div>
+          </div>
+        </div>
+      `;
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 1);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      assert(window.scrollX == 0);
+      assert(window.scrollY == 0);
+      
+      let parent = document.querySelector('.parent');
+      assert(parent.scrollTop == 100 + scrollBarSize);
+      assert(parent.scrollLeft == 100);
+      
+      let child = document.querySelector('.child');
+      assert(child.scrollTop == 140 + scrollBarSize);
+      assert(child.scrollLeft == 140 + scrollBarSize);
+      
+      selection = window.getSelection();
+      assert(selection.toString() == 'ぴか');
+      assert(selection.rangeCount == 1);
+    });
+    
+    it('should scroll both window and overflow area to found text', async () => {
+      assert(window.innerWidth == 400);
+      assert(window.innerHeight == 400);
+      
+      let selection;
+      baseElement.innerHTML = `
+        <style>
+          * {margin: 0; padding: 0;}
+          .wrapper {
+            overflow: scroll;
+            width: 100px;
+            height: 100px;
+            margin-left: 400px;
+            margin-top: 400px;
+          }
+          .keyword {
+            padding-left: 200px;
+            padding-top: 200px;
+            font-size: 20px;
+            line-height: 40px;
+            width: 40px;
+          }
+        </style>
+        <div class="wrapper">
+          <div class="keyword">ぴか</div>
+        </div>
+      `;
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 1);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      assert(window.scrollX == 100);
+      assert(window.scrollY == 100 + scrollBarSize);
+      
+      let wrapper = document.querySelector('.wrapper');
+      assert(wrapper.scrollTop == 140 + scrollBarSize);
+      assert(wrapper.scrollLeft == 140 + scrollBarSize);
+      
+      selection = window.getSelection();
+      assert(selection.toString() == 'ぴか');
+      assert(selection.rangeCount == 1);
+    });
   });
 });
