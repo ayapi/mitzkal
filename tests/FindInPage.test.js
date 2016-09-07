@@ -167,6 +167,28 @@ describe('FindInPage', function() {
       assert(selection.rangeCount == 0);
     });
     
+    it('should select any texts when matched range has no valid rect', async () => {
+      let selection;
+      baseElement.innerHTML = `
+        ぴか<span style="display:none">かくれぴか！！</span>ぴか
+      `;
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 3);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      selection = window.getSelection();
+      assert(selection.toString() == 'ぴか');
+      assert(selection.rangeCount == 1);
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      assert(foundLog[1].current == 1);
+      assert(foundLog[1].total == 3);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      selection = window.getSelection();
+      assert(selection.rangeCount == 0);
+    });
+    
     it('should scroll window vertically to found text', async () => {
       assert(window.innerHeight == 400);
       
