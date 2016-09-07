@@ -493,5 +493,41 @@ describe('FindInPage', function() {
       assert(selection.toString() == 'ぴか');
       assert(selection.rangeCount == 1);
     });
+    
+    it('should not scroll if not necessary', async () => {
+      assert(window.innerWidth == 400);
+      assert(window.innerHeight == 400);
+      
+      let selection;
+      baseElement.innerHTML = `
+        <style>
+          * {margin: 0; padding: 0;}
+          body {
+            width: 800px;
+            height: 800px;
+          }
+          .keyword {
+            padding-left: 200px;
+            padding-top: 200px;
+            font-size: 20px;
+            line-height: 40px;
+            width: 40px;
+          }
+        </style>
+        <div class="wrapper">
+          <div class="keyword">ぴか</div>
+        </div>
+      `;
+      
+      window.scrollTo(150, 100);
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 1);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      assert(window.scrollX == 150);
+      assert(window.scrollY == 100);
+    });
   });
 });
