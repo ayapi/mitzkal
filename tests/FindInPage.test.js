@@ -266,6 +266,35 @@ describe('FindInPage', function() {
       assert(selection.rangeCount == 1);
     });
     
+    it('should scroll back window to found text', async () => {
+      assert(window.innerWidth == 400);
+      
+      let selection;
+      baseElement.innerHTML = `
+        <style>
+          * {margin: 0; padding: 0;}
+          body {
+            width: 800px;
+            height: 800px;
+          }
+        </style>
+        <p>ぴか</p>
+      `;
+      
+      window.scrollTo(400, 400);
+      
+      findInPage.find({text: 'ぴか', direction: 1});
+      assert(foundLog[0].current == 0);
+      assert(foundLog[0].total == 1);
+      await Promise.all([waitForRectsChange(), waitForSelectionChange()]);
+      assert(window.scrollY == 0);
+      assert(window.scrollX == 0);
+      
+      selection = window.getSelection();
+      assert(selection.toString() == 'ぴか');
+      assert(selection.rangeCount == 1);
+    });
+    
     it('should scroll overflow area horizontally to found text', async () => {
       assert(window.innerWidth == 400);
       
